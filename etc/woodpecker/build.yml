@@ -5,11 +5,11 @@ pipeline:
   build:
     image: alpine
     environment:
-      - TCC_SHA=027b8fb9b88fe137447fb8bb1b61079be9702472
+      - TCC_SHA=29ae3ed4d5b83eec43598d6cd7949bccb41c8083
     commands: |
       apk add --no-cache \
           imlib2 imlib2-dev xorgproto \
-          libxft libxft-dev libexif libexif-dev giflib giflib-dev libwebp libwebp-dev \
+          libxft libxft-dev libexif libexif-dev \
           gcc clang llvm llvm-dev build-base wget ca-certificates bc >/dev/null
       wget "https://github.com/TinyCC/tinycc/archive/$TCC_SHA.tar.gz" >/dev/null
       tar xzf "$TCC_SHA.tar.gz" >/dev/null
@@ -26,5 +26,5 @@ pipeline:
       # full-build with gcc and clang #
       build "1" "full"
       # ensure minimal-build works without opt deps installed
-      apk del libxft libxft-dev libexif libexif-dev giflib giflib-dev libwebp libwebp-dev >/dev/null
+      apk del libxft libxft-dev libexif libexif-dev >/dev/null
       build "0" "minimal"

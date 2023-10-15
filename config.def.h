@@ -6,14 +6,14 @@ static const int WIN_HEIGHT = 600;
 
 /* colors and font can be overwritten via X resource properties.
  * See nsxiv(1), X(7) section Resources and xrdb(1) for more information.
- */
-static const char *DEFAULT_WIN_BG     = "white";
-static const char *DEFAULT_WIN_FG     = "black";
-static const char *DEFAULT_MARK_COLOR = NULL;  /* NULL means it will default to window foreground */
+ *                                      X resource            value (NULL == default) */
+static const char *WIN_BG[]   = { "Nsxiv.window.background",   "white" };
+static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "black" };
+static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",      NULL };
 #if HAVE_LIBFONTS
-static const char *DEFAULT_BAR_BG     = NULL;  /* NULL means it will default to window background */
-static const char *DEFAULT_BAR_FG     = NULL;  /* NULL means it will default to window foreground */
-static const char *DEFAULT_FONT       = "monospace-8";
+static const char *BAR_BG[]   = { "Nsxiv.bar.background",       NULL };
+static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",       NULL };
+static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "monospace-8" };
 
 /* if true, statusbar appears on top of the window */
 static const bool TOP_STATUSBAR = false;
@@ -92,6 +92,7 @@ static const KeySym KEYHANDLER_ABORT = XK_Escape;
 static const keymap_t keys[] = {
 	/* modifiers    key               function              argument */
 	{ 0,            XK_q,             g_quit,               0 },
+	{ 0,            XK_Q,             g_pick_quit,          0 },
 	{ 0,            XK_Return,        g_switch_mode,        None },
 	{ 0,            XK_f,             g_toggle_fullscreen,  None },
 	{ 0,            XK_b,             g_toggle_bar,         None },

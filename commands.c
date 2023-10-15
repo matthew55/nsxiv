@@ -59,6 +59,13 @@ bool cg_quit(arg_t status)
 	return None; /* silence tcc warning */
 }
 
+bool cg_pick_quit(arg_t status)
+{
+	if (options->to_stdout && markcnt == 0)
+		printf("%s%c", files[fileidx].name, options->using_null ? '\0' : '\n');
+	return cg_quit(status);
+}
+
 bool cg_switch_mode(arg_t _)
 {
 	if (mode == MODE_IMAGE) {
@@ -76,9 +83,6 @@ bool cg_switch_mode(arg_t _)
 		load_image(fileidx);
 		mode = MODE_IMAGE;
 	}
-	close_info();
-	open_info();
-	title_dirty = true;
 	return true;
 }
 
@@ -408,12 +412,7 @@ bool ci_slideshow(arg_t _)
 
 bool ct_move_sel(arg_t dir)
 {
-	bool dirty = tns_move_selection(&tns, dir, prefix);
-	if (dirty) {
-		close_info();
-		open_info();
-	}
-	return dirty;
+	return tns_move_selection(&tns, dir, prefix);
 }
 
 bool ct_reload_all(arg_t _)

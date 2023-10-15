@@ -141,20 +141,20 @@ void win_init(win_t *win)
 	res_man = XResourceManagerString(e->dpy);
 	db = res_man == NULL ? NULL : XrmGetStringDatabase(res_man);
 
-	win_bg = win_res(db, RES_CLASS ".window.background", DEFAULT_WIN_BG);
-	win_fg = win_res(db, RES_CLASS ".window.foreground", DEFAULT_WIN_FG);
-	mrk_fg = win_res(db, RES_CLASS ".mark.foreground",   DEFAULT_MARK_COLOR ? DEFAULT_MARK_COLOR : win_fg);
+	win_bg = win_res(db, WIN_BG[0], WIN_BG[1] ? WIN_BG[1] : "white");
+	win_fg = win_res(db, WIN_FG[0], WIN_FG[1] ? WIN_FG[1] : "black");
+	mrk_fg = win_res(db, MARK_FG[0], MARK_FG[1] ? MARK_FG[1] : win_fg);
 	win_alloc_color(e, win_bg, &win->win_bg);
 	win_alloc_color(e, win_fg, &win->win_fg);
 	win_alloc_color(e, mrk_fg, &win->mrk_fg);
 
 #if HAVE_LIBFONTS
-	bar_bg = win_res(db, RES_CLASS ".bar.background", DEFAULT_BAR_BG ? DEFAULT_BAR_BG : win_bg);
-	bar_fg = win_res(db, RES_CLASS ".bar.foreground", DEFAULT_BAR_FG ? DEFAULT_BAR_FG : win_fg);
+	bar_bg = win_res(db, BAR_BG[0], BAR_BG[1] ? BAR_BG[1] : win_bg);
+	bar_fg = win_res(db, BAR_FG[0], BAR_FG[1] ? BAR_FG[1] : win_fg);
 	xft_alloc_color(e, bar_bg, &win->bar_bg);
 	xft_alloc_color(e, bar_fg, &win->bar_fg);
 
-	f = win_res(db, RES_CLASS ".bar.font", DEFAULT_FONT);
+	f = win_res(db, BAR_FONT[0], BAR_FONT[1] ? BAR_FONT[1] : "monospace-8");
 	win_init_font(e, f);
 
 	win->bar.l.buf = lbuf;
@@ -470,8 +470,10 @@ static void win_draw_bar(win_t *win)
 	XSetBackground(e->dpy, gc, win->bar_bg.pixel);
 
 	if ((len = strlen(r->buf)) > 0) {
-		if ((tw = TEXTWIDTH(win, r->buf, len)) > w)
+		if ((tw = TEXTWIDTH(win, r->buf, len)) > w) {
+			XftDrawDestroy(d);
 			return;
+		}
 		x = win->w - tw - H_TEXT_PAD;
 		w -= tw;
 		win_draw_text(win, d, &win->bar_fg, x, y, r->buf, len, tw);
